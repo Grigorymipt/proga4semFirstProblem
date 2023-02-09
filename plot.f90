@@ -57,7 +57,7 @@ contains
     !   y(j) = (aN**2 / 2 - cos(phiN/180*3.1415926535))
     !   j = j + 1
     ! end do 
-    call makeEulerCromerPlot(i, dt)
+    call makeEulerPlot(i, dt)
 
     xmin = 1 
     xmax = i * dt
@@ -92,9 +92,9 @@ contains
     ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
     do while (j <= i)
       aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
-      vN = vN + aN * dt
-      phiN = phiN + vN * dt
       
+      phiN = phiN + vN * dt
+      vN = vN + aN * dt
       
       !print *, j * dt
       print *, phiN
@@ -118,9 +118,9 @@ contains
     ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
     do while (j <= i)
       aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
-      
-      phiN = phiN + vN * dt
       vN = vN + aN * dt
+      phiN = phiN + vN * dt
+
       
       !print *, j * dt
       print *, phiN
@@ -130,4 +130,31 @@ contains
       j = j + 1
     end do 
   end subroutine makeEulerCromerPlot
+  subroutine makePrColPlot(i,dt)
+    real :: dt 
+    integer :: i    
+ 
+    j = 1
+    phiN = phi0
+    vN = v0
+    aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
+
+    ymin = (aN**2 / 2 - cos(phi0/180*3.1415926535)) - 1
+    ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
+    do while (j <= i)
+      aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
+      phiN1 = phiN + vN * dt
+      vN1 = vN + aN * dt
+      aN1 = -2 * gamma * vN1 - omega**2 * sin(phiN1/180*3.1415926535)
+      phiN = phiN + vN * dt + aN * dt**2 / 2 
+      vN = vN + (aN + aN1) * dt / 2
+      
+      !print *, j * dt
+      print *, phiN
+      !print *, vN
+      x(j) = j * dt       
+      y(j) = (aN**2 / 2 - cos(phiN/180*3.1415926535))
+      j = j + 1
+    end do 
+  end subroutine makePrColPlot
 end module plot

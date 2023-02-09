@@ -41,7 +41,7 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
   ! We create a "pixbuffer" to store the pixels of the image.
   ! This pixbuffer has no Alpha channel (15% faster), only RGB.
   ! https://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-The-GdkPixbuf-Structure.html
-  pixwidth  = 800
+  pixwidth  = 1000
   pixheight = 800
   my_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8_c_int, &
                            & pixwidth, pixheight)
@@ -52,58 +52,82 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
                  & (/pixwidth*pixheight*nch/))
 
   ! The background is black (red=0, green=0, blue=0):
+  
+  
+  ! Euler method:
   pixel = char(0)
-
-  p = 1 + nint(200.0)*nch + nint(400.0)*rowstride
-      
-  do i = 1, 100
-    !pixel(p + i) = char(255)
-  end do
-  
-  
-  
-  !read(*,*) phi0
-  !read(*,*) v0
-  
-  
-  j = 0
-  phiN = phi0
-  vN = v0
-  aN = -2 * gamma * v0 - omega**2 * phi0/180*3.1415926535 
-  do while (j < 200)
-    aN = -2 * gamma * vN - omega**2 * phiN /180*3.1415926535
-    vN = vN + aN * dt
-    phiN = phiN + vN * dt
-    
-    
-    !print *, j * dt
-    print *, phiN
-    !print *, vN
-    p = 1 + nint(400 + phiN*9)*nch + nint(400 - vN*40)*rowstride
-    pixel(p + i) = char(255)
-    j = j + 1
-  end do 
-  
   j = 0
   phiN = phi0
   vN = v0
   aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
-  do while (j < 2000000)
+  do while (j < 200000)
     aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535) 
-    
+
     phiN = phiN + vN * dt * 0.01
     vN = vN + aN * dt * 0.01
+
     
     !print *, j * dt
     print *, phiN
     !print *, vN
-    p = 1 + nint(400 + phiN * 9)*nch + nint(400 - vN * 40)*rowstride
+    p = 1 + nint(400 + phiN * 6)*nch + nint(400 - vN * 40)*rowstride
     pixel(p + i) = char(255)
     j = j + 1
   end do 
   
   ! Save the picture as a PNG:
-  cstatus = gdk_pixbuf_savev(my_pixbuf, "path.png"//c_null_char,&
+  cstatus = gdk_pixbuf_savev(my_pixbuf, "pathE.png"//c_null_char,&
+              & "png"//c_null_char, c_null_ptr, c_null_ptr, c_null_ptr)
+
+
+  ! Euler-Cromer method:
+  pixel = char(0)
+  j = 0
+  phiN = phi0
+  vN = v0
+  aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
+  do while (j < 200000)
+    aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535) 
+    vN = vN + aN * dt * 0.01
+    phiN = phiN + vN * dt * 0.01
+    
+    !print *, j * dt
+    print *, phiN
+    !print *, vN
+    p = 1 + nint(400 + phiN * 6)*nch + nint(400 - vN * 40)*rowstride
+    pixel(p + i) = char(255)
+    j = j + 1
+  end do 
+  
+  ! Save the picture as a PNG:
+  cstatus = gdk_pixbuf_savev(my_pixbuf, "pathEC.png"//c_null_char,&
+              & "png"//c_null_char, c_null_ptr, c_null_ptr, c_null_ptr)
+
+
+  ! Predictor - Corrector Method
+  pixel = char(0)
+  j = 0
+  phiN = phi0
+  vN = v0
+  aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
+  do while (j < 200000)
+    aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
+    phiN1 = phiN + vN * dt
+    vN1 = vN + aN * dt
+    aN1 = -2 * gamma * vN1 - omega**2 * sin(phiN1/180*3.1415926535)
+    phiN = phiN + vN * dt + aN * dt**2 / 2 
+    vN = vN + (aN + aN1) * dt / 2
+    
+    !print *, j * dt
+    print *, phiN
+    !print *, vN
+    p = 1 + nint(400 + phiN * 6)*nch + nint(400 - vN * 40)*rowstride
+    pixel(p + i) = char(255)
+    j = j + 1
+  end do 
+  
+  ! Save the picture as a PNG:
+  cstatus = gdk_pixbuf_savev(my_pixbuf, "pathPC.png"//c_null_char,&
               & "png"//c_null_char, c_null_ptr, c_null_ptr, c_null_ptr)
   
    
