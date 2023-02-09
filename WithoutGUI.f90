@@ -18,10 +18,13 @@ program PhaseSpace
   
   real :: gamma = 0.00
   real :: omega = 1
+  integer :: io
   
-  cycles = 200000
+  cycles = 20000
   
   ! Euler method:
+  
+  open(newunit=io, file="DataFromEulerMethod.txt", status="new", action="write")
   j = 0
   phiN = phi0
   vN = v0
@@ -34,10 +37,13 @@ program PhaseSpace
 
     
     print *, j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535)) 
+    write(io, *) j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535)) 
     j = j + 1
-  end do 
+  end do   
+  close(io)
   
   ! Euler-Cromer method:
+  open(newunit=io, file="DataFromEulerCromerMethod.txt", status="new", action="write")
   j = 0
   phiN = phi0
   vN = v0
@@ -47,11 +53,14 @@ program PhaseSpace
     vN = vN + aN * dt * 0.01
     phiN = phiN + vN * dt * 0.01
     
-    print *, j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535)) 
+    print *, j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535))
+    write(io, *) j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535))  
     j = j + 1
   end do
+  close(io)
 
   ! Predictor - Corrector Method
+  open(newunit=io, file="DataFromPrCorMethod.txt", status="new", action="write")
   j = 0
   phiN = phi0
   vN = v0
@@ -65,8 +74,9 @@ program PhaseSpace
     vN = vN + (aN + aN1) * dt / 2
     
     print *, j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535)) 
+    write(io, *) j * dt, phiN, vN, (aN**2 / 2 - cos(phiN/180*3.1415926535)) 
     j = j + 1
   end do 
-  
+  close(io)
    
 end program PhaseSpace
