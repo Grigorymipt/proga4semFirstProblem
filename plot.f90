@@ -30,7 +30,7 @@ contains
     real(plflt) :: xmin, xmax, ymin, ymax
     real(plflt) :: xscale, yscale, xoff, yoff
 
-    
+
     allocate(x(i))
     allocate(y(i))
 
@@ -71,7 +71,7 @@ contains
     call plcol0(1)
     call plenv( xmin, xmax, ymin, ymax, 0, 0 )
     call plcol0(2)
-    call pllab( '(time)', '(Energy integral)', 'energy fluctuation' )
+    call pllab( '(time)', '(Energy integral)', 'Energy fluctuation' )
 
     !   Draw the line through the data
     call plcol0(3)
