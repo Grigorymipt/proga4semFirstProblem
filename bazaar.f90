@@ -88,10 +88,11 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
   phiN = phi0
   vN = v0
   aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
-  do while (j < 200000)
+  do while (j < 2000000)
     aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535) 
-    vN = vN + aN * dt * 0.01
+    
     phiN = phiN + vN * dt * 0.01
+    vN = vN + aN * dt * 0.01
     
     !print *, j * dt
     print *, phiN

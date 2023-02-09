@@ -1,35 +1,34 @@
 module plot
   use plplot, PI => PL_PI
   use common_ex1
+  
   implicit none
+  real :: phi0 = 0
+  real :: phiN
+  real :: phiN1
+  
+  real :: v0 = 5
+  real :: vN
+  real :: vN1
+  
+  real :: a0
+  real :: aN
+  real :: aN1
+  
+  integer :: j
+  
+  real :: gamma = 0.00
+  real :: omega = 1
+
+  real(plflt), allocatable :: x(:), y(:)
+  real(plflt) :: xmin, xmax, ymin, ymax
+  
   
 contains
   subroutine makePlot(xscale, yscale, xoff, yoff, i, dt)
-
-
-    real :: phi0 = 0
-    real :: phiN
-    real :: phiN1
-    
-    real :: v0 = 5
-    real :: vN
-    real :: vN1
-    
-    real :: a0
-    real :: aN
-    real :: aN1
-    
-    real :: dt 
-    
-    integer :: j
-    
-    real :: gamma = 0.00
-    real :: omega = 1
-    integer :: i
-    real(plflt), allocatable :: x(:), y(:)
-    real(plflt) :: xmin, xmax, ymin, ymax
     real(plflt) :: xscale, yscale, xoff, yoff
-
+    real :: dt 
+    integer :: i    
 
     allocate(x(i))
     allocate(y(i))
@@ -37,28 +36,28 @@ contains
     ! Call you func here
     ! allocate(e(2,i))
 
-    j = 1
-    phiN = phi0
-    vN = v0
-    aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
+    ! j = 1
+    ! phiN = phi0
+    ! vN = v0
+    ! aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
 
-    ymin = (aN**2 / 2 - cos(phi0/180*3.1415926535)) - 1
-    ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
+    ! ymin = (aN**2 / 2 - cos(phi0/180*3.1415926535)) - 1
+    ! ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
 
-    do while (j <= i)
-      aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
-      vN = vN + aN * dt
-      phiN = phiN + vN * dt
+    ! do while (j <= i)
+    !   aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
+    !   vN = vN + aN * dt
+    !   phiN = phiN + vN * dt
       
       
-      !print *, j * dt
-      print *, phiN
-      !print *, vN
-      x(j) = j * dt       
-      y(j) = (aN**2 / 2 - cos(phiN/180*3.1415926535))
-      j = j + 1
-    end do 
-
+    !   !print *, j * dt
+    !   print *, phiN
+    !   !print *, vN
+    !   x(j) = j * dt       
+    !   y(j) = (aN**2 / 2 - cos(phiN/180*3.1415926535))
+    !   j = j + 1
+    ! end do 
+    call makeEulerCromerPlot(i, dt)
 
     xmin = 1 
     xmax = i * dt
@@ -80,4 +79,55 @@ contains
     deallocate(y)
 
   end subroutine makePlot
+  subroutine makeEulerPlot(i, dt)
+    real :: dt 
+    integer :: i    
+ 
+    j = 1
+    phiN = phi0
+    vN = v0
+    aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
+
+    ymin = (aN**2 / 2 - cos(phi0/180*3.1415926535)) - 1
+    ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
+    do while (j <= i)
+      aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
+      vN = vN + aN * dt
+      phiN = phiN + vN * dt
+      
+      
+      !print *, j * dt
+      print *, phiN
+      !print *, vN
+      x(j) = j * dt       
+      y(j) = (aN**2 / 2 - cos(phiN/180*3.1415926535))
+      j = j + 1
+    end do 
+  endsubroutine makeEulerPlot
+
+  subroutine makeEulerCromerPlot(i,dt)
+    real :: dt 
+    integer :: i    
+ 
+    j = 1
+    phiN = phi0
+    vN = v0
+    aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
+
+    ymin = (aN**2 / 2 - cos(phi0/180*3.1415926535)) - 1
+    ymax = (aN**2 / 2 - cos(phi0/180*3.1415926535)) + 1
+    do while (j <= i)
+      aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
+      
+      phiN = phiN + vN * dt
+      vN = vN + aN * dt
+      
+      !print *, j * dt
+      print *, phiN
+      !print *, vN
+      x(j) = j * dt       
+      y(j) = (aN**2 / 2 - cos(phiN/180*3.1415926535))
+      j = j + 1
+    end do 
+  end subroutine makeEulerCromerPlot
 end module plot
