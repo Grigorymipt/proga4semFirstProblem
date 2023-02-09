@@ -34,6 +34,7 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
   real :: dt = 0.3
   
   integer :: j
+  integer(kind=8) :: cycles
   
   real :: gamma = 0.00
   real :: omega = 1
@@ -53,14 +54,14 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
 
   ! The background is black (red=0, green=0, blue=0):
   
-  
+  cycles = 2000000
   ! Euler method:
   pixel = char(0)
   j = 0
   phiN = phi0
   vN = v0
   aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
-  do while (j < 200000)
+  do while (j < cycles)
     aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535) 
 
     phiN = phiN + vN * dt * 0.01
@@ -86,7 +87,7 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
   phiN = phi0
   vN = v0
   aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
-  do while (j < 200000)
+  do while (j < cycles)
     aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535) 
     vN = vN + aN * dt * 0.01
     phiN = phiN + vN * dt * 0.01
@@ -110,7 +111,7 @@ use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, &
   phiN = phi0
   vN = v0
   aN = -2 * gamma * v0 - omega**2 * sin(phi0/180*3.1415926535) 
-  do while (j < 200000)
+  do while (j < cycles)
     aN = -2 * gamma * vN - omega**2 * sin(phiN/180*3.1415926535)
     phiN1 = phiN + vN * dt
     vN1 = vN + aN * dt
